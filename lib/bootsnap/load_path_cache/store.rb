@@ -75,7 +75,11 @@ module Bootsnap
         # `encoding:` looks redundant wrt `binwrite`, but necessary on windows
         # because binary is part of mode.
         File.binwrite(tmp, MessagePack.dump(@data), mode: exclusive_write, encoding: Encoding::BINARY)
-        FileUtils.mv(tmp, @store_path)
+        begin
+          FileUtils.mv(tmp, @store_path)
+        rescue Errno::EACCESS
+          # make some code
+        end
       rescue Errno::EEXIST
         retry
       end
